@@ -2,8 +2,9 @@ import http from "http";
 import fs from "fs/promises";
 import url from "url";
 import path from "path";
+import "dotenv/config";
 
-const PORT = 8900;
+const PORT = process.env.PORT;
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
