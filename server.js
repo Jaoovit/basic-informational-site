@@ -1,22 +1,31 @@
 import http from "http";
-import fs from "fs";
+import fs from "fs/promises";
+import url from "url";
 import path from "path";
 
 const PORT = 8900;
 
-const server = http.createServer((req, res) => {
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+console.log(path.join(__dirname, "src", "index.html"));
+
+const server = http.createServer(async (req, res) => {
+  let filePath;
   if (req.url === "/") {
-    res.writeHead(200, "Content-type", "text/html");
-    res.end("<h1>Homepage</h1>");
+    filePath = path.join(__dirname, "src", "index.html");
   } else if (req.url === "/about") {
-    res.writeHead(200, "Content-type", "text/html");
-    res.end("<h1>About</h1>");
+    filePath = path.join(__dirname, "src", "about.html");
   } else if (req.url === "/contact") {
-    res.writeHead(200, "Content-type", "text/html");
-    res.end("<h1>Contact me</h1>");
+    filePath = path.join(__dirname, "src", "contact.html");
   } else {
-    throw new Error("NOT FOUND");
+    filePath = path.join(__dirname, "src", "404.html");
   }
+
+  const data = await fs.readFile(filePath);
+  res.setHeader("Content-Type", "text/html");
+  res.write(data);
+  res.end();
 });
 
 server.listen(PORT, () => {
